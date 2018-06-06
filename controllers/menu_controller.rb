@@ -1,20 +1,21 @@
 require_relative '../models/address_book'
+require 'paint'
 
 class MenuController
   attr_reader :address_book
 
   def initialize
-    @address_book = AddressBook.new
+    @address_book = AddressBook.first
   end
 
   def main_menu
-    puts "Main Menu - #{address_book.entries.count} entries"
-    puts "1 - View all entries"
-    puts "2 - Create an entry"
-    puts "3 - Search for an entry"
-    puts "4 - Import entries from a CSV"
-    puts "5 - Exit"
-    print "Enter your selection: "
+    puts Paint["#{@address_book.name} Address Book – #{Entry.count} entries", :white, :bright]
+    puts Paint["1 - View all entries", "#48D1CC"]
+    puts Paint["2 - Create an entry", "#48D1CC"]
+    puts Paint["3 - Search for an entry", "#48D1CC"]
+    puts Paint["4 - Import entries from a CSV", "#48D1CC"]
+    puts Paint["5 - Exit", "#48D1CC"]
+    print Paint["Enter your selection: ", :white, :bright]
 
     selection = gets.to_i
 
@@ -40,13 +41,13 @@ class MenuController
         exit(0)
       else
         system "clear"
-        puts "Sorry, that is not a valid input"
+        puts Paint["Sorry, that is not a valid input", "#FF4500"]
         main_menu
     end
   end
 
   def view_all_entries
-    address_book.entries.each do |entry|
+    Entry.all.each do |entry|
       system "clear"
       puts entry.to_s
       entry_submenu(entry)
@@ -74,14 +75,15 @@ class MenuController
 
   def search_entries
     print "Search by name: "
-    name = gets.chomp
-    match = address_book.binary_search(name)
+    value = gets.chomp
+    match = Entry.find_each(value)
+    # match = Entry.find_by_name(value)
     system "clear"
     if match
       puts match.to_s
       search_submenu(match)
     else
-      puts "No match found for #{name}"
+      puts "No match found for #{value}"
     end
   end
 
@@ -106,10 +108,11 @@ class MenuController
   end
 
   def entry_submenu(entry)
-    puts "n - next entry"
-    puts "d - delete entry"
-    puts "e - edit this entry"
-    puts "m - return to main menu"
+    puts Paint["n - next entry", "#48D1CC"]
+    puts Paint["d - delete entry", "#48D1CC"]
+    puts Paint["e - edit this entry", "#48D1CC"]
+    puts Paint["m - return to main menu", "#48D1CC"]
+    puts Paint["q - exit", "#48D1CC"]
 
     selection = gets.chomp
 
@@ -123,9 +126,12 @@ class MenuController
       when "m"
         system "clear"
         main_menu
+      when "q"
+        puts "Good-bye!"
+        exit(0)
       else
         system "clear"
-        puts "#{selection} is not a valid input"
+        puts Paint["#{selection} is not a valid input", "#FF4500"]
         entry_submenu(entry)
     end
   end
@@ -151,9 +157,10 @@ class MenuController
   end
 
   def search_submenu(entry)
-    puts "\nd - delete entry"
-    puts "e - edit this entry"
-    puts "m - return to main menu"
+    puts Paint["\nd - delete entry", "#48D1CC"]
+    puts Paint["e - edit this entry", "#48D1CC"]
+    puts Paint["m - return to main menu", "#48D1CC"]
+    puts Paint["q - exit", "#48D1CC"]
     selection = gets.chomp
 
     case selection
@@ -168,9 +175,12 @@ class MenuController
       when "m"
         system "clear"
         main_menu
+      when "q"
+        puts "Good-bye!"
+        exit(0)
       else
         system "clear"
-        puts "#{selection} is not a valid input"
+        puts Paint["#{selection} is not a valid input",  "#FF4500"]
         puts entry.to_s
         search_submenu(entry)
     end
